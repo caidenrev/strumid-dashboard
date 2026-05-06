@@ -1,0 +1,164 @@
+// Prisma Schema for PT Strum Technology Asia - EV Dashboard SaaS
+// Database: PostgreSQL (Supabase recommended)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth (NextAuth.js v5 required tables) ────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // null for OAuth users
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  connectedPlatforms ConnectedPlatform[]
+  socialMetrics    SocialMetric[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Social Platform Connections ─────────────────────────────────────────────
+
+model ConnectedPlatform {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     Platform
+  accountId    String   // platform's account/page ID
+  accountName  String
+  accessToken  String   @db.Text
+  refreshToken String?  @db.Text
+  tokenExpiry  DateTime?
+  isActive     Boolean  @default(true)
+  connectedAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metrics SocialMetric[]
+
+  @@unique([userId, platform, accountId])
+  @@map("connected_platforms")
+}
+
+// ─── Cached Social Metrics ───────────────────────────────────────────────────
+
+model SocialMetric {
+  id                  String   @id @default(cuid())
+  userId              String
+  connectedPlatformId String
+  platform            Platform
+  date                DateTime @db.Date
+  reach               Int      @default(0)
+  impressions         Int      @default(0)
+  engagementRate      Float    @default(0)
+  profileClicks       Int      @default(0)
+  followerCount       Int      @default(0)
+  followerGrowth      Int      @default(0)
+  postsCount          Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connectedPlatform ConnectedPlatform @relation(fields: [connectedPlatformId], references: [id], onDelete: Cascade)
+
+  @@unique([connectedPlatformId, date])
+  @@index([userId, platform, date])
+  @@map("social_metrics")
+}
+
+model TopPost {
+  id                  String   @id @default(cuid())
+  connectedPlatformId String
+  externalPostId      String   // platform's post ID
+  platform            Platform
+  title               String?
+  thumbnailUrl        String?
+  reach               Int      @default(0)
+  impressions         Int      @default(0)
+  engagement          Float    @default(0)
+  clicks              Int      @default(0)
+  publishedAt         DateTime
+  fetchedAt           DateTime @default(now())
+
+  @@unique([connectedPlatformId, externalPostId])
+  @@index([connectedPlatformId, publishedAt])
+  @@map("top_posts")
+}
+
+model DemographicSnapshot {
+  id                  String   @id @default(cuid())
+  connectedPlatformId String
+  platform            Platform
+  ageRange            String   // e.g. "18-24"
+  gender              String?  // "male" | "female" | "other"
+  count               Int
+  snapshotDate        DateTime @db.Date
+  createdAt           DateTime @default(now())
+
+  @@index([connectedPlatformId, snapshotDate])
+  @@map("demographic_snapshots")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Platform {
+  INSTAGRAM
+  TIKTOK
+}
+
+enum Role {
+  USER
+  ADMIN
+}
