@@ -16,20 +16,20 @@ export function KPICard({ title, value, trend, icon: Icon, format = "number" }: 
   return (
     <Card className="rounded-xl">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground leading-tight">
           {title}
         </CardTitle>
-        <div className="rounded-lg bg-primary/10 p-2">
+        <div className="rounded-lg bg-primary/10 p-2 shrink-0">
           <Icon className="h-4 w-4 text-primary" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="flex items-center gap-1 text-xs">
+        <div className="text-xl md:text-2xl font-bold">{value}</div>
+        <div className="flex items-center gap-1 text-xs mt-1">
           {isPositive ? (
-            <ArrowUpIcon className="h-3 w-3 text-green-600" />
+            <ArrowUpIcon className="h-3 w-3 text-green-600 shrink-0" />
           ) : (
-            <ArrowDownIcon className="h-3 w-3 text-red-600" />
+            <ArrowDownIcon className="h-3 w-3 text-red-600 shrink-0" />
           )}
           <span
             className={cn(
@@ -39,7 +39,7 @@ export function KPICard({ title, value, trend, icon: Icon, format = "number" }: 
           >
             {Math.abs(trend)}%
           </span>
-          <span className="text-muted-foreground">from last month</span>
+          <span className="text-muted-foreground hidden sm:inline">from last month</span>
         </div>
       </CardContent>
     </Card>

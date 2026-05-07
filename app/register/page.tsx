@@ -28,7 +28,6 @@ export default function RegisterPage() {
           setError(result.error)
         }
       } catch {
-        // NextAuth throws a redirect on success — expected
         router.push("/")
       }
     })

@@ -26,6 +26,7 @@ model User {
   sessions         Session[]
   connectedPlatforms ConnectedPlatform[]
   socialMetrics    SocialMetric[]
+  contentBriefs    ContentBrief[]
 
   @@map("users")
 }
@@ -151,6 +152,27 @@ model DemographicSnapshot {
   @@map("demographic_snapshots")
 }
 
+// ─── Content Brief (AI Generator) ────────────────────────────────────────────
+
+model ContentBrief {
+  id          String            @id @default(cuid())
+  userId      String
+  title       String
+  topic       String            @db.Text
+  platform    String            // e.g. "instagram", "tiktok", "youtube"
+  contentType ContentType
+  prompt      String            @db.Text
+  result      Json              // structured table rows from Gemini
+  notes       String?           @db.Text
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("content_briefs")
+}
+
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 enum Platform {
@@ -161,4 +183,9 @@ enum Platform {
 enum Role {
   USER
   ADMIN
+}
+
+enum ContentType {
+  VIDEO
+  SLIDE
 }
