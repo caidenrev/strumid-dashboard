@@ -28,7 +28,7 @@ export default function RegisterPage() {
           setError(result.error)
         }
       } catch {
-        router.push("/")
+        router.push("/dashboard")
       }
     })
   }
@@ -37,7 +37,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
       <header className="flex h-16 items-center justify-between border-b px-6">
-        <Link href="/landing" className="flex items-center gap-2 font-semibold">
+        <Link href="/" className="flex items-center gap-2 font-semibold">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Zap className="h-5 w-5" />
           </div>

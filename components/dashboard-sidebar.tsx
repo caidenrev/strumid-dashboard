@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Overview", href: "/", icon: LayoutDashboard },
+  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Instagram Analytics", href: "/instagram", icon: Camera },
   { name: "TikTok Analytics", href: "/tiktok", icon: Video },
   { name: "Audience", href: "/audience", icon: Users },
@@ -38,7 +38,7 @@ export function DashboardSidebar({ isOpen = false, onClose }: DashboardSidebarPr
       {/* Logo row */}
       <div className="flex h-16 items-center justify-between border-b px-4 md:px-6">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 font-semibold"
           onClick={onClose}
         >

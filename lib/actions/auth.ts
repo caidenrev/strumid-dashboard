@@ -45,7 +45,7 @@ export async function registerAction(
   })
 
   // Auto sign-in after registration
-  await signIn("credentials", { email, password, redirectTo: "/" })
+  await signIn("credentials", { email, password, redirectTo: "/dashboard" })
 
   return { success: true }
 }
@@ -57,7 +57,7 @@ export async function loginAction(
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: "/",
+      redirectTo: "/dashboard",
     })
     return { success: true }
   } catch (error) {
@@ -74,5 +74,5 @@ export async function loginAction(
 }
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/landing" })
+  await signOut({ redirectTo: "/" })
 }

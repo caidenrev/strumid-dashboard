@@ -29,7 +29,7 @@ export default function LoginPage() {
         }
       } catch {
         // NextAuth throws a redirect — this is expected on success
-        router.push("/")
+        router.push("/dashboard")
       }
     })
   }
@@ -38,7 +38,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
       <header className="flex h-16 items-center justify-between border-b px-6">
-        <Link href="/landing" className="flex items-center gap-2 font-semibold">
+        <Link href="/" className="flex items-center gap-2 font-semibold">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Zap className="h-5 w-5" />
           </div>
